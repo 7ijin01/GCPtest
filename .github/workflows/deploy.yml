@@ -33,16 +33,10 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Docker를 위한 gcloud 인증 설정
-        run: gcloud auth configure-docker --quiet
-      - name: gcloud 인증 정보 확인
-        run: gcloud auth list
+        run: gcloud auth configure-docker asia-northeast3-docker.pkg.dev
 
-
-      - name: Docker 이미지 생성
-        run: docker build -t gcptest .
-
-      - name : Docker 이미지 태그 설정
-        run: docker tag gcptest asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
+      - name: Docker 이미지 생성 및 태그 설정
+        run: docker build -t asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest .
 
       - name: Docker 이미지 푸시
         run: docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
@@ -58,4 +52,4 @@ jobs:
             sudo docker stop gcptest || true
             sudo docker rm gcptest || true
             sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
-            sudo docker run -d --name gcptest -p 8080:8080 asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
+            sudo docker run -d --name gcptest -p 8080:8080 --restart always asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
