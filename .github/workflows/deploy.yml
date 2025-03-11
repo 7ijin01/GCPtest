@@ -34,6 +34,9 @@ jobs:
 
       - name: Docker를 위한 gcloud 인증 설정
         run: gcloud auth configure-docker --quiet
+      - name: gcloud 인증 정보 확인
+        run: gcloud auth list
+
 
       - name: Docker 이미지 생성
         run: docker build -t gcptest .
