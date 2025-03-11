@@ -36,13 +36,13 @@ jobs:
         run: gcloud auth configure-docker --quiet
 
       - name: Docker 이미지 생성
-        run: docker build -t GCPtest .
+        run: docker build -t gcptest .
 
       - name : Docker 이미지 태그 설정
-        run: docker tag GCPtest asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/GCPtest:latest
+        run: docker tag gcptest asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
 
       - name: Docker 이미지 푸시
-        run: docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/GCPtest:latest
+        run: docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
 
       - name: SSH로 GCE에 접속하여 배포
         uses: appleboy/ssh-action@v1.0.3
@@ -52,7 +52,7 @@ jobs:
           key: ${{ secrets.GCE_PRIVATE_KEY }}
           script_stop: true
           script: |
-            sudo docker stop cicdtest || true
-            sudo docker rm cicdtest || true
-            sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/GCPtest:latest
-            sudo docker run -d --name GCPtest -p 8080:8080 asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/GCPtest:latest
+            sudo docker stop gcptest || true
+            sudo docker rm gcptest || true
+            sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
+            sudo docker run -d --name gcptest -p 8080:8080 asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
