@@ -41,6 +41,15 @@ jobs:
       - name: Docker 이미지 푸시
         run: docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
 
+      - name: `compose.yml` GCE 서버로 복사
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.GCE_HOST }}
+          username: ${{ secrets.GCE_USERNAME }}
+          key: ${{ secrets.GCE_PRIVATE_KEY }}
+          source: "compose.yml"
+          target: "/home/${{ secrets.GCE_USERNAME }}/"
+
       - name: SSH로 GCE에 접속하여 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -49,10 +58,10 @@ jobs:
           key: ${{ secrets.GCE_PRIVATE_KEY }}
           script_stop: true
           script: |
-            cd ~
+            cd /home/${{ secrets.GCE_USERNAME }}/  
             sudo docker compose down || true
             sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
-            sudo docker compose -f compose.yml up -d --build
+            sudo docker compose up -d --build
 #            sudo docker stop gcptest || true
 #            sudo docker rm gcptest || true
 #            sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
