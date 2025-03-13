@@ -49,9 +49,10 @@ jobs:
           key: ${{ secrets.GCE_PRIVATE_KEY }}
           script_stop: true
           script: |
+            cd ~
             sudo docker compose down || true
             sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
-            sudo docker compose up -d --build
+            sudo docker compose -f compose.yml up -d --build
 #            sudo docker stop gcptest || true
 #            sudo docker rm gcptest || true
 #            sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/gcptest:latest
